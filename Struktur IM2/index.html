@@ -3,233 +3,281 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>F1 Velocity</title>
+    <title>F1 Nexus Dashboard</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="page-glow glow-1"></div>
-    <div class="page-glow glow-2"></div>
+    <div class="bg-glow glow-one"></div>
+    <div class="bg-glow glow-two"></div>
 
     <header class="hero">
       <nav class="navbar">
-        <div class="logo">
-          <span class="logo-mark">F1</span>
-          <span class="logo-text">Velocity</span>
+        <div class="brand">
+          <div class="brand-mark">F1</div>
+          <div class="brand-text">
+            <span class="brand-title">NEXUS</span>
+            <span class="brand-subtitle">free historical data + live news</span>
+          </div>
         </div>
 
-        <ul class="nav-links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Kalender</a></li>
-          <li><a href="#">Teams</a></li>
-          <li><a href="#">Fahrer</a></li>
-          <li><a href="#">Standings</a></li>
-        </ul>
-
-        <a href="#" class="nav-button">Live Now</a>
+        <div class="nav-status" id="apiStatus">APIs werden geladen ...</div>
       </nav>
 
       <div class="hero-grid"></div>
 
-      <section class="hero-content">
+      <section class="hero-content container">
         <div class="hero-left">
-          <p class="eyebrow">2026 FORMULA 1 SEASON</p>
+          <p class="eyebrow">OPENF1 FREE MODE</p>
           <h1>
-            Racing.<br />
-            Data.<br />
-            <span>Adrenaline.</span>
+            F1 Dashboard<br />
+            <span>ohne Live-Abo</span><br />
+            mit aktuellen News
           </h1>
           <p class="hero-text">
-            Die moderne F1-Plattform für News, Rennkalender, Fahrer, Teams und
-            Live-Feeling. Schnell, dunkel, präzise und gebaut für echten
-            Motorsport-Vibe.
+            OpenF1 liefert hier bewusst nur kostenlose historische Session- und
+            Meeting-Daten. Für aktuelle Schlagzeilen läuft der News-Bereich
+            separat über eine News-API.
           </p>
 
           <div class="hero-actions">
-            <a href="#" class="btn btn-primary">Saison entdecken</a>
-            <a href="#" class="btn btn-secondary">Neueste Headlines</a>
+            <a href="#overview" class="btn btn-primary">Dashboard ansehen</a>
+            <a href="#news" class="btn btn-secondary">F1 News</a>
           </div>
 
-          <div class="hero-stats">
-            <div class="stat-box">
-              <strong>24</strong>
-              <span>Grand Prix</span>
+          <div class="hero-mini-stats">
+            <div class="mini-stat">
+              <span class="mini-label">Meeting</span>
+              <strong id="meetingName">Wird geladen ...</strong>
             </div>
-            <div class="stat-box">
-              <strong>20</strong>
-              <span>Fahrer</span>
+            <div class="mini-stat">
+              <span class="mini-label">Session</span>
+              <strong id="sessionName">Wird geladen ...</strong>
             </div>
-            <div class="stat-box">
-              <strong>10</strong>
-              <span>Teams</span>
+            <div class="mini-stat">
+              <span class="mini-label">Modus</span>
+              <strong id="sessionStatus">Free historical</strong>
             </div>
           </div>
         </div>
 
         <div class="hero-right">
-          <div class="car-card">
-            <div class="speed-lines"></div>
-            <img
-              src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1400&q=80"
-              alt="Racing Car"
-            />
-            <div class="car-overlay">
-              <p class="mini-label">NEXT RACE</p>
-              <h2>Monaco GP</h2>
-              <span>26 May 2026</span>
+          <div class="hero-card">
+            <p class="card-top-label">LAST COMPLETED SESSION</p>
+            <h2 id="headlineRace">Letztes Event</h2>
+            <p id="headlineCircuit" class="hero-card-sub">Ort erscheint hier</p>
+
+            <div class="hero-card-grid">
+              <div class="hero-card-item">
+                <span>Land</span>
+                <strong id="countryName">--</strong>
+              </div>
+              <div class="hero-card-item">
+                <span>Ort</span>
+                <strong id="locationName">--</strong>
+              </div>
+              <div class="hero-card-item">
+                <span>Start</span>
+                <strong id="sessionStart">--</strong>
+              </div>
+              <div class="hero-card-item">
+                <span>Ende</span>
+                <strong id="sessionEnd">--</strong>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </header>
 
-    <main>
-      <section class="ticker-section">
-        <div class="ticker-card">
-          <span class="ticker-tag">FASTEST LAP</span>
-          <h3>1:11.248</h3>
-          <p>Top-Zeit des Wochenendes mit maximalem Grip im letzten Sektor.</p>
-        </div>
-
-        <div class="ticker-card">
-          <span class="ticker-tag">POLE BATTLE</span>
-          <h3>+0.043</h3>
-          <p>
-            Die Spitze liegt extrem eng beieinander. Jede Hundertstel zählt.
-          </p>
-        </div>
-
-        <div class="ticker-card">
-          <span class="ticker-tag">TEAM FORM</span>
-          <h3>Red Zone</h3>
-          <p>
-            Neue Aeropakete und aggressive Setups verändern das
-            Kräfteverhältnis.
-          </p>
+    <main class="container" id="overview">
+      <section class="container" style="margin-top: 10px; margin-bottom: 20px">
+        <div class="panel" id="debugPanel">
+          <div class="panel-header">
+            <p class="section-label">DEBUG</p>
+            <h3>Status</h3>
+          </div>
+          <div id="debugOutput" style="color: #aeb7c5; font-size: 0.95rem">
+            Noch keine Meldungen.
+          </div>
         </div>
       </section>
+      <section class="top-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <p class="section-label">SESSION</p>
+            <h3>Letzte beendete Session</h3>
+          </div>
 
-      <section class="section-heading">
-        <p>FEATURED</p>
-        <h2>Race Weekend Highlights</h2>
-      </section>
-
-      <section class="feature-grid">
-        <article class="feature-card large-card">
-          <div class="feature-content">
-            <span class="card-label">Track Focus</span>
-            <h3>Monaco bleibt der ultimative Präzisionstest</h3>
-            <p>
-              Kein Auslauf, kaum Fehlerverzeihung und maximaler Druck auf Fahrer
-              und Strategie. Monaco trennt Mut von Perfektion.
-            </p>
-            <a href="#">Mehr erfahren</a>
+          <div class="info-list">
+            <div class="info-row">
+              <span>Meeting</span>
+              <strong id="infoMeeting">--</strong>
+            </div>
+            <div class="info-row">
+              <span>Session Name</span>
+              <strong id="infoSessionName">--</strong>
+            </div>
+            <div class="info-row">
+              <span>Session Type</span>
+              <strong id="infoSessionType">--</strong>
+            </div>
+            <div class="info-row">
+              <span>Startzeit</span>
+              <strong id="infoSessionStart">--</strong>
+            </div>
+            <div class="info-row">
+              <span>Endzeit</span>
+              <strong id="infoSessionEnd">--</strong>
+            </div>
           </div>
         </article>
 
-        <article class="feature-card small-card">
-          <span class="card-label">Driver Watch</span>
-          <h3>Rookies setzen die Spitze unter Stress</h3>
-          <p>Die neue Generation fährt kompromisslos und greift konstant an.</p>
-          <a href="#">Story lesen</a>
-        </article>
+        <article class="panel">
+          <div class="panel-header">
+            <p class="section-label">WEATHER</p>
+            <h3>Session-Wetter</h3>
+          </div>
 
-        <article class="feature-card small-card">
-          <span class="card-label">Tech Update</span>
-          <h3>Aerodynamik wird wieder zum Schlüssel</h3>
-          <p>
-            Jede kleine Veränderung am Auto wirkt sich direkt auf Pace und
-            Reifen aus.
-          </p>
-          <a href="#">Analyse öffnen</a>
+          <div class="weather-grid">
+            <div class="weather-box">
+              <span>Luft</span>
+              <strong id="airTemp">-- °C</strong>
+            </div>
+            <div class="weather-box">
+              <span>Strecke</span>
+              <strong id="trackTemp">-- °C</strong>
+            </div>
+            <div class="weather-box">
+              <span>Wind</span>
+              <strong id="windSpeed">-- km/h</strong>
+            </div>
+            <div class="weather-box">
+              <span>Regen</span>
+              <strong id="rainfall">--</strong>
+            </div>
+            <div class="weather-box">
+              <span>Luftfeuchtigkeit</span>
+              <strong id="humidity">-- %</strong>
+            </div>
+            <div class="weather-box">
+              <span>Druck</span>
+              <strong id="pressure">-- hPa</strong>
+            </div>
+          </div>
         </article>
       </section>
 
-      <section class="section-heading standings-heading">
-        <p>SEASON SNAPSHOT</p>
-        <h2>Current Standings</h2>
+      <section class="content-grid">
+        <section class="panel wide-panel" id="drivers">
+          <div class="panel-header">
+            <p class="section-label">DRIVERS</p>
+            <h3>Fahrer dieser Session</h3>
+          </div>
+
+          <div class="drivers-grid" id="driversGrid">
+            <div class="placeholder-card">Fahrerdaten erscheinen hier</div>
+            <div class="placeholder-card">Fahrerdaten erscheinen hier</div>
+            <div class="placeholder-card">Fahrerdaten erscheinen hier</div>
+            <div class="placeholder-card">Fahrerdaten erscheinen hier</div>
+          </div>
+        </section>
+
+        <aside class="panel side-panel">
+          <div class="panel-header">
+            <p class="section-label">RACE CONTROL</p>
+            <h3>Session Feed</h3>
+          </div>
+
+          <div class="feed-list" id="raceControlFeed">
+            <div class="feed-item">
+              <span class="feed-time">--:--</span>
+              <div>
+                <strong>Noch keine Meldungen</strong>
+                <p>Die Race-Control-Einträge werden hier geladen.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
       </section>
 
       <section class="standings-grid">
-        <div class="standings-card">
-          <div class="standings-title">
-            <h3>Top Fahrer</h3>
-            <span>Driver Ranking</span>
+        <article class="panel">
+          <div class="panel-header">
+            <p class="section-label">CHAMPIONSHIP</p>
+            <h3>Fahrerwertung</h3>
           </div>
 
-          <div class="standing-row">
-            <div class="position">01</div>
-            <div class="driver-info">
-              <strong>Max Verstappen</strong>
-              <span>Red Bull Racing</span>
+          <div class="table-list" id="driverStandings">
+            <div class="table-row">
+              <span>01</span>
+              <strong>Wird geladen ...</strong>
+              <span>--</span>
             </div>
-            <div class="points">186</div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <p class="section-label">CHAMPIONSHIP</p>
+            <h3>Konstrukteurswertung</h3>
           </div>
 
-          <div class="standing-row">
-            <div class="position">02</div>
-            <div class="driver-info">
-              <strong>Charles Leclerc</strong>
-              <span>Ferrari</span>
+          <div class="table-list" id="teamStandings">
+            <div class="table-row">
+              <span>01</span>
+              <strong>Wird geladen ...</strong>
+              <span>--</span>
             </div>
-            <div class="points">172</div>
           </div>
+        </article>
+      </section>
 
-          <div class="standing-row">
-            <div class="position">03</div>
-            <div class="driver-info">
-              <strong>Lando Norris</strong>
-              <span>McLaren</span>
-            </div>
-            <div class="points">164</div>
+      <section class="panel news-panel" id="news">
+        <div class="panel-header news-header">
+          <div>
+            <p class="section-label">LIVE NEWS</p>
+            <h3>Aktuelle F1 Schlagzeilen</h3>
           </div>
+          <p class="news-subtext">
+            News laufen separat aktuell über Currents API
+          </p>
         </div>
 
-        <div class="standings-card">
-          <div class="standings-title">
-            <h3>Top Teams</h3>
-            <span>Constructors</span>
-          </div>
-
-          <div class="standing-row">
-            <div class="position">01</div>
-            <div class="driver-info">
-              <strong>Red Bull Racing</strong>
-              <span>Championship push</span>
+        <div class="news-grid" id="newsGrid">
+          <article class="news-card placeholder-news">
+            <div class="news-image news-image-placeholder"></div>
+            <div class="news-content">
+              <span class="news-source">Currents</span>
+              <h4>Hier erscheinen aktuelle F1 News</h4>
+              <p>
+                Sobald du deinen Currents API Key einträgst, werden Headlines
+                geladen.
+              </p>
+              <a href="#">API-Key eintragen</a>
             </div>
-            <div class="points">310</div>
-          </div>
-
-          <div class="standing-row">
-            <div class="position">02</div>
-            <div class="driver-info">
-              <strong>Ferrari</strong>
-              <span>Strong qualifying pace</span>
-            </div>
-            <div class="points">287</div>
-          </div>
-
-          <div class="standing-row">
-            <div class="position">03</div>
-            <div class="driver-info">
-              <strong>McLaren</strong>
-              <span>Consistent race form</span>
-            </div>
-            <div class="points">254</div>
-          </div>
+          </article>
         </div>
       </section>
 
-      <section class="cta-section">
-        <div class="cta-card">
-          <p class="cta-top">ENTER THE PADDOCK</p>
-          <h2>Alle wichtigen F1-Momente an einem Ort</h2>
-          <p>
-            Von Breaking News bis Standings und Rennkalender: eine Startseite,
-            die sich direkt wie Motorsport anfühlt.
-          </p>
-          <a href="#" class="btn btn-primary">Zur Plattform</a>
+      <section class="panel api-panel">
+        <div class="panel-header">
+          <p class="section-label">API MAP</p>
+          <h3>Vorbereitete Bereiche</h3>
+        </div>
+
+        <div class="api-tags">
+          <span>meetings</span>
+          <span>sessions</span>
+          <span>drivers</span>
+          <span>weather</span>
+          <span>race_control</span>
+          <span>championship_drivers</span>
+          <span>championship_teams</span>
+          <span>currents search</span>
         </div>
       </section>
     </main>
+
+    <script src="script.js"></script>
   </body>
 </html>
