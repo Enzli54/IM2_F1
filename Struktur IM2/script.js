@@ -1,5 +1,9 @@
 const OPENF1_BASE = "https://api.openf1.org/v1";
-const CURRENTS_API_KEY = "5fWRxNGk4yWg8GpYU4DdFnpeWBwWfsERnlirizN_4PVeFn4W";
+
+const state = {
+  meetings: [],
+  currentMeetingIndex: -1
+};
 
 function byId(id) {
   return document.getElementById(id);
@@ -64,13 +68,35 @@ function formatTime(value) {
   }).format(date);
 }
 
-async function fetchJson(url, options = {}) {
+function isPastDate(value) {
+  if (!value) return false;
+  return new Date(value).getTime() <= Date.now();
+}
+
+function sortByDateAsc(items, key) {
+  return [...items].sort((a, b) => {
+    const aTime = new Date(a?.[key] || 0).getTime();
+    const bTime = new Date(b?.[key] || 0).getTime();
+    return aTime - bTime;
+  });
+}
+
+function sortByDateDesc(items, key) {
+  return [...items].sort((a, b) => {
+    const aTime = new Date(a?.[key] || 0).getTime();
+    const bTime = new Date(b?.[key] || 0).getTime();
+    return bTime - aTime;
+  });
+}
+
+async function fetchJson(url) {
   console.log("Fetch:", url);
-  const response = await fetch(url, options);
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
-    throw new Error(`HTTP ${response.status} bei ${url} ${text}`);
+    throw new Error(`HTTP ${response.status} bei ${url}${text ? ` | ${text}` : ""}`);
   }
 
   return response.json();
@@ -80,39 +106,90 @@ async function fetchOpenF1(endpoint) {
   return fetchJson(`${OPENF1_BASE}/${endpoint}`);
 }
 
-function sortByDateDesc(items, key) {
-  return [...items].sort((a, b) => {
-    return new Date(b?.[key] || 0) - new Date(a?.[key] || 0);
+function getLatestPastMeetingIndex(meetings) {
+  let latestPastIndex = 0;
+
+  meetings.forEach((meeting, index) => {
+    if (isPastDate(meeting.date_start)) {
+      latestPastIndex = index;
+    }
   });
+
+  return latestPastIndex;
 }
 
-function getLatestMeeting(meetings) {
-  return sortByDateDesc(meetings, "date_start")[0] || null;
+function isRaceSession(session) {
+  const name = String(session?.session_name || "").toLowerCase();
+  const type = String(session?.session_type || "").toLowerCase();
+
+  return (
+    type === "race" ||
+    name === "race" ||
+    name.includes("grand prix") ||
+    (name.includes("race") && !name.includes("sprint"))
+  );
 }
 
-function getLatestCompletedRaceSession(sessions) {
-  const now = Date.now();
+function getPreferredSession(sessions, isFutureMeeting) {
+  const raceSessions = sessions.filter(isRaceSession);
 
-  const raceSessions = sessions.filter((session) => {
-    const name = String(session.session_name || "").toLowerCase();
-    const type = String(session.session_type || "").toLowerCase();
-    return name.includes("race") || type === "race";
-  });
+  if (raceSessions.length === 0) {
+    return sortByDateAsc(sessions, "date_start")[0] || null;
+  }
 
-  const completedRaceSessions = raceSessions.filter((session) => {
-    const endTime = new Date(session.date_end || session.date_start || 0).getTime();
-    return endTime <= now;
-  });
+  if (isFutureMeeting) {
+    return sortByDateAsc(raceSessions, "date_start")[0] || null;
+  }
+
+  const completedRaceSessions = raceSessions.filter((session) =>
+    isPastDate(session.date_end || session.date_start)
+  );
 
   if (completedRaceSessions.length > 0) {
     return sortByDateDesc(completedRaceSessions, "date_end")[0] || null;
   }
 
-  if (raceSessions.length > 0) {
-    return sortByDateDesc(raceSessions, "date_start")[0] || null;
-  }
+  return sortByDateAsc(raceSessions, "date_start")[0] || null;
+}
 
-  return null;
+function updateRaceNav() {
+  const meeting = state.meetings[state.currentMeetingIndex];
+  const name =
+    meeting?.meeting_name || meeting?.meeting_official_name || "Unbekanntes Rennen";
+
+  setText("selectedRaceName", name);
+
+  const prevBtn = byId("prevRaceBtn");
+  const nextBtn = byId("nextRaceBtn");
+
+  if (prevBtn) prevBtn.disabled = state.currentMeetingIndex <= 0;
+  if (nextBtn) nextBtn.disabled = state.currentMeetingIndex >= state.meetings.length - 1;
+}
+
+function updateMeetingAndSession(meeting, session) {
+  const meetingName =
+    meeting?.meeting_name || meeting?.meeting_official_name || "Unbekanntes Meeting";
+  const location = meeting?.location || "Unbekannter Ort";
+  const country = meeting?.country_name || "Unbekanntes Land";
+  const sessionName = session?.session_name || "Unbekannte Session";
+  const sessionType = session?.session_type || "--";
+
+  setText("meetingName", meetingName);
+  setText("sessionName", sessionName);
+  setText("sessionStatus", sessionType);
+
+  setText("headlineRace", meetingName);
+  setText("headlineCircuit", `${location}, ${country}`);
+  setText("countryName", country);
+  setText("locationName", location);
+  setText("sessionStart", formatDate(session?.date_start));
+  setText("sessionEnd", formatDate(session?.date_end));
+
+  setText("infoMeeting", meetingName);
+  setText("infoSessionName", sessionName);
+  setText("infoSessionType", sessionType);
+  setText("infoSessionStart", formatDate(session?.date_start));
+  setText("infoSessionEnd", formatDate(session?.date_end));
 }
 
 function renderDrivers(drivers) {
@@ -176,7 +253,18 @@ function renderRaceControl(messages) {
   setHtml("raceControlFeed", html);
 }
 
-function renderDriverStandings(rows, drivers) {
+function renderDriverStandings(rows, drivers, isFutureMeeting) {
+  if (isFutureMeeting) {
+    setHtml("driverStandings", `
+      <div class="table-row">
+        <span>--</span>
+        <strong>Noch keine Wertung</strong>
+        <span>zukünftig</span>
+      </div>
+    `);
+    return;
+  }
+
   if (!Array.isArray(rows) || rows.length === 0) {
     setHtml("driverStandings", `
       <div class="table-row">
@@ -190,7 +278,7 @@ function renderDriverStandings(rows, drivers) {
 
   const driverMap = new Map();
   (drivers || []).forEach((driver) => {
-    driverMap.set(driver.driver_number, driver);
+    driverMap.set(String(driver.driver_number), driver);
   });
 
   const sortedRows = [...rows].sort((a, b) => {
@@ -198,7 +286,7 @@ function renderDriverStandings(rows, drivers) {
   });
 
   const html = sortedRows.slice(0, 10).map((row) => {
-    const driver = driverMap.get(row.driver_number);
+    const driver = driverMap.get(String(row.driver_number));
     const position = String(row.position_current ?? "--").padStart(2, "0");
     const name = driver?.full_name || `#${row.driver_number}`;
     const points = row.points_current ?? "--";
@@ -215,7 +303,18 @@ function renderDriverStandings(rows, drivers) {
   setHtml("driverStandings", html);
 }
 
-function renderTeamStandings(rows) {
+function renderTeamStandings(rows, isFutureMeeting) {
+  if (isFutureMeeting) {
+    setHtml("teamStandings", `
+      <div class="table-row">
+        <span>--</span>
+        <strong>Noch keine Wertung</strong>
+        <span>zukünftig</span>
+      </div>
+    `);
+    return;
+  }
+
   if (!Array.isArray(rows) || rows.length === 0) {
     setHtml("teamStandings", `
       <div class="table-row">
@@ -233,7 +332,7 @@ function renderTeamStandings(rows) {
 
   const html = sortedRows.slice(0, 10).map((row) => {
     const position = String(row.position_current ?? "--").padStart(2, "0");
-    const name = row.team_name || row.name || "Unbekanntes Team";
+    const name = row.team_name || "Unbekanntes Team";
     const points = row.points_current ?? "--";
 
     return `
@@ -248,65 +347,45 @@ function renderTeamStandings(rows) {
   setHtml("teamStandings", html);
 }
 
-async function loadOpenF1() {
-  setStatus("apiStatus", "Lade OpenF1 ...");
+function renderEmptyState() {
+  renderDrivers([]);
+  renderWeather([]);
+  renderRaceControl([]);
+  renderDriverStandings([], [], false);
+  renderTeamStandings([], false);
+}
 
-  const meetings = await fetchOpenF1("meetings");
-  if (!Array.isArray(meetings) || meetings.length === 0) {
-    throw new Error("Keine Meetings gefunden");
-  }
+async function loadMeetingByIndex(index) {
+  if (index < 0 || index >= state.meetings.length) return;
 
-  const meeting = getLatestMeeting(meetings);
-  if (!meeting?.meeting_key) {
-    throw new Error("Kein Meeting gefunden");
-  }
+  state.currentMeetingIndex = index;
+  updateRaceNav();
+
+  const meeting = state.meetings[index];
+  const isFutureMeeting = !isPastDate(meeting?.date_start);
+
+  setStatus("apiStatus", "Lade Rennen ...");
+  renderEmptyState();
 
   const sessions = await fetchOpenF1(`sessions?meeting_key=${meeting.meeting_key}`);
   if (!Array.isArray(sessions) || sessions.length === 0) {
-    throw new Error("Keine Sessions gefunden");
+    throw new Error("Keine Sessions für dieses Rennen gefunden");
   }
 
-  const raceSession = getLatestCompletedRaceSession(sessions);
-  if (!raceSession?.session_key) {
-    throw new Error("Keine beendete Race-Session gefunden");
+  const selectedSession = getPreferredSession(sessions, isFutureMeeting);
+  if (!selectedSession?.session_key) {
+    throw new Error("Keine passende Session gefunden");
   }
 
-  const meetingKey = meeting.meeting_key;
-  const sessionKey = raceSession.session_key;
+  updateMeetingAndSession(meeting, selectedSession);
 
-  setText("meetingName", meeting.meeting_name || meeting.meeting_official_name || "Meeting");
-  setText("sessionName", raceSession.session_name || "Race");
-  setText("sessionStatus", "Race session geladen");
-
-  setText("headlineRace", meeting.meeting_name || meeting.meeting_official_name || "Event");
-  setText("headlineCircuit", `${meeting.location || "--"}, ${meeting.country_name || "--"}`);
-  setText("countryName", meeting.country_name || "--");
-  setText("locationName", meeting.location || "--");
-  setText("sessionStart", formatDate(raceSession.date_start));
-  setText("sessionEnd", formatDate(raceSession.date_end));
-
-  setText("infoMeeting", meeting.meeting_name || meeting.meeting_official_name || "--");
-  setText("infoSessionName", raceSession.session_name || "--");
-  setText("infoSessionType", raceSession.session_type || "--");
-  setText("infoSessionStart", formatDate(raceSession.date_start));
-  setText("infoSessionEnd", formatDate(raceSession.date_end));
-
-  const [
-    driversResult,
-    weatherResult,
-    raceControlResult,
-    driverStandingsResult,
-    teamStandingsResult
-  ] = await Promise.allSettled([
-    fetchOpenF1(`drivers?session_key=${sessionKey}`),
-    fetchOpenF1(`weather?meeting_key=${meetingKey}`),
-    fetchOpenF1(`race_control?session_key=${sessionKey}`),
-    fetchOpenF1(`championship_drivers?session_key=${sessionKey}`),
-    fetchOpenF1(`championship_teams?session_key=${sessionKey}`)
+  const [driversResult, weatherResult, raceControlResult] = await Promise.allSettled([
+    fetchOpenF1(`drivers?session_key=${selectedSession.session_key}`),
+    fetchOpenF1(`weather?meeting_key=${meeting.meeting_key}`),
+    fetchOpenF1(`race_control?session_key=${selectedSession.session_key}`)
   ]);
 
   const drivers = driversResult.status === "fulfilled" ? driversResult.value : [];
-
   renderDrivers(drivers);
 
   if (weatherResult.status === "fulfilled") {
@@ -321,26 +400,84 @@ async function loadOpenF1() {
     renderRaceControl([]);
   }
 
-  if (driverStandingsResult.status === "fulfilled") {
-    renderDriverStandings(driverStandingsResult.value, drivers);
+  if (!isFutureMeeting && isRaceSession(selectedSession)) {
+    const [driverStandingsResult, teamStandingsResult] = await Promise.allSettled([
+      fetchOpenF1(`championship_drivers?session_key=${selectedSession.session_key}`),
+      fetchOpenF1(`championship_teams?session_key=${selectedSession.session_key}`)
+    ]);
+
+    if (driverStandingsResult.status === "fulfilled") {
+      renderDriverStandings(driverStandingsResult.value, drivers, false);
+    } else {
+      renderDriverStandings([], drivers, false);
+    }
+
+    if (teamStandingsResult.status === "fulfilled") {
+      renderTeamStandings(teamStandingsResult.value, false);
+    } else {
+      renderTeamStandings([], false);
+    }
   } else {
-    console.error("Driver standings Fehler:", driverStandingsResult.reason);
-    renderDriverStandings([], drivers);
+    renderDriverStandings([], drivers, true);
+    renderTeamStandings([], true);
   }
 
-  if (teamStandingsResult.status === "fulfilled") {
-    renderTeamStandings(teamStandingsResult.value);
-  } else {
-    console.error("Team standings Fehler:", teamStandingsResult.reason);
-    renderTeamStandings([]);
-  }
-
-  setStatus("apiStatus", "OpenF1 geladen", true);
+  setStatus("apiStatus", "Rennen geladen", true);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadOpenF1().catch((error) => {
+async function loadMeetings() {
+  setStatus("apiStatus", "Lade Kalender ...");
+
+  const currentYear = new Date().getFullYear();
+  const meetings = await fetchOpenF1(`meetings?year=${currentYear}`);
+
+  if (!Array.isArray(meetings) || meetings.length === 0) {
+    throw new Error("Keine Meetings gefunden");
+  }
+
+  state.meetings = sortByDateAsc(meetings, "date_start");
+  state.currentMeetingIndex = getLatestPastMeetingIndex(state.meetings);
+
+  updateRaceNav();
+  await loadMeetingByIndex(state.currentMeetingIndex);
+}
+
+function bindRaceNavigation() {
+  const prevBtn = byId("prevRaceBtn");
+  const nextBtn = byId("nextRaceBtn");
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", async () => {
+      try {
+        await loadMeetingByIndex(state.currentMeetingIndex - 1);
+      } catch (error) {
+        console.error(error);
+        setStatus("apiStatus", "Fehler beim Laden");
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", async () => {
+      try {
+        await loadMeetingByIndex(state.currentMeetingIndex + 1);
+      } catch (error) {
+        console.error(error);
+        setStatus("apiStatus", "Fehler beim Laden");
+      }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("script.js wurde geladen");
+
+  bindRaceNavigation();
+
+  try {
+    await loadMeetings();
+  } catch (error) {
     console.error(error);
     setStatus("apiStatus", "OpenF1 Fehler");
-  });
+  }
 });
