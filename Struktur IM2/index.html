@@ -3,118 +3,231 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>F1 JAZO</title>
+    <title>F1 Velocity</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="page-glow glow-1"></div>
+    <div class="page-glow glow-2"></div>
+
     <header class="hero">
       <nav class="navbar">
-        <div class="logo">F1<span>JAZO</span></div>
+        <div class="logo">
+          <span class="logo-mark">F1</span>
+          <span class="logo-text">Velocity</span>
+        </div>
+
         <ul class="nav-links">
           <li><a href="#">Home</a></li>
-          <li><a href="#">Rennen</a></li>
-          <li><a href="#">Constructers</a></li>
+          <li><a href="#">Kalender</a></li>
+          <li><a href="#">Teams</a></li>
           <li><a href="#">Fahrer</a></li>
-          <li><a href="#">News</a></li>
+          <li><a href="#">Standings</a></li>
         </ul>
+
+        <a href="#" class="nav-button">Live Now</a>
       </nav>
 
-      <div class="hero-overlay"></div>
+      <div class="hero-grid"></div>
 
-      <div class="hero-content">
-        <p class="tag">LIVE SPEED / PURE ADRENALINE</p>
-        <h1>Die Welt der <span>Formula1</span><br />an einem Ort</h1>
-        <p class="hero-text">
-          News, Rennkalender, Fahrer, Teams und die spannendsten Momente der
-          Saison – modern, schnell und voller Racing-Energie.
-        </p>
-        <div class="hero-buttons">
-          <a href="#" class="btn btn-primary">Zur Saison</a>
-          <a href="#" class="btn btn-secondary">Neueste News</a>
+      <section class="hero-content">
+        <div class="hero-left">
+          <p class="eyebrow">2026 FORMULA 1 SEASON</p>
+          <h1>
+            Racing.<br />
+            Data.<br />
+            <span>Adrenaline.</span>
+          </h1>
+          <p class="hero-text">
+            Die moderne F1-Plattform für News, Rennkalender, Fahrer, Teams und
+            Live-Feeling. Schnell, dunkel, präzise und gebaut für echten
+            Motorsport-Vibe.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary">Saison entdecken</a>
+            <a href="#" class="btn btn-secondary">Neueste Headlines</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-box">
+              <strong>24</strong>
+              <span>Grand Prix</span>
+            </div>
+            <div class="stat-box">
+              <strong>20</strong>
+              <span>Fahrer</span>
+            </div>
+            <div class="stat-box">
+              <strong>10</strong>
+              <span>Teams</span>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <div class="hero-right">
+          <div class="car-card">
+            <div class="speed-lines"></div>
+            <img
+              src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1400&q=80"
+              alt="Racing Car"
+            />
+            <div class="car-overlay">
+              <p class="mini-label">NEXT RACE</p>
+              <h2>Monaco GP</h2>
+              <span>26 May 2026</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </header>
 
     <main>
-      <section class="stats-section">
-        <div class="stat-card">
-          <h2>24</h2>
-          <p>Rennwochenenden</p>
-        </div>
-        <div class="stat-card">
-          <h2>10</h2>
-          <p>Teams</p>
-        </div>
-        <div class="stat-card">
-          <h2>20</h2>
-          <p>Fahrer</p>
-        </div>
-        <div class="stat-card">
-          <h2>1</h2>
-          <p>Champion-Ziel</p>
-        </div>
-      </section>
-
-      <section class="featured-section">
-        <div class="section-title">
-          <p>FEATURED</p>
-          <h2>Nächstes Highlight</h2>
+      <section class="ticker-section">
+        <div class="ticker-card">
+          <span class="ticker-tag">FASTEST LAP</span>
+          <h3>1:11.248</h3>
+          <p>Top-Zeit des Wochenendes mit maximalem Grip im letzten Sektor.</p>
         </div>
 
-        <div class="featured-card">
-          <div class="featured-left">
-            <p class="race-label">Nächstes Rennen</p>
-            <h3>Monaco Grand Prix</h3>
-            <p class="race-date">26. Mai 2026</p>
-            <p class="race-description">
-              Enge Mauern, kein Platz für Fehler und maximaler Druck. Das
-              legendärste Stadtrennen im Kalender bringt pure Spannung.
-            </p>
-            <a href="#" class="btn btn-primary small-btn">Mehr erfahren</a>
-          </div>
+        <div class="ticker-card">
+          <span class="ticker-tag">POLE BATTLE</span>
+          <h3>+0.043</h3>
+          <p>
+            Die Spitze liegt extrem eng beieinander. Jede Hundertstel zählt.
+          </p>
+        </div>
 
-          <div class="featured-right">
-            <div class="track-line"></div>
-          </div>
+        <div class="ticker-card">
+          <span class="ticker-tag">TEAM FORM</span>
+          <h3>Red Zone</h3>
+          <p>
+            Neue Aeropakete und aggressive Setups verändern das
+            Kräfteverhältnis.
+          </p>
         </div>
       </section>
 
-      <section class="news-section">
-        <div class="section-title">
-          <p>LATEST</p>
-          <h2>Top Stories</h2>
+      <section class="section-heading">
+        <p>FEATURED</p>
+        <h2>Race Weekend Highlights</h2>
+      </section>
+
+      <section class="feature-grid">
+        <article class="feature-card large-card">
+          <div class="feature-content">
+            <span class="card-label">Track Focus</span>
+            <h3>Monaco bleibt der ultimative Präzisionstest</h3>
+            <p>
+              Kein Auslauf, kaum Fehlerverzeihung und maximaler Druck auf Fahrer
+              und Strategie. Monaco trennt Mut von Perfektion.
+            </p>
+            <a href="#">Mehr erfahren</a>
+          </div>
+        </article>
+
+        <article class="feature-card small-card">
+          <span class="card-label">Driver Watch</span>
+          <h3>Rookies setzen die Spitze unter Stress</h3>
+          <p>Die neue Generation fährt kompromisslos und greift konstant an.</p>
+          <a href="#">Story lesen</a>
+        </article>
+
+        <article class="feature-card small-card">
+          <span class="card-label">Tech Update</span>
+          <h3>Aerodynamik wird wieder zum Schlüssel</h3>
+          <p>
+            Jede kleine Veränderung am Auto wirkt sich direkt auf Pace und
+            Reifen aus.
+          </p>
+          <a href="#">Analyse öffnen</a>
+        </article>
+      </section>
+
+      <section class="section-heading standings-heading">
+        <p>SEASON SNAPSHOT</p>
+        <h2>Current Standings</h2>
+      </section>
+
+      <section class="standings-grid">
+        <div class="standings-card">
+          <div class="standings-title">
+            <h3>Top Fahrer</h3>
+            <span>Driver Ranking</span>
+          </div>
+
+          <div class="standing-row">
+            <div class="position">01</div>
+            <div class="driver-info">
+              <strong>Max Verstappen</strong>
+              <span>Red Bull Racing</span>
+            </div>
+            <div class="points">186</div>
+          </div>
+
+          <div class="standing-row">
+            <div class="position">02</div>
+            <div class="driver-info">
+              <strong>Charles Leclerc</strong>
+              <span>Ferrari</span>
+            </div>
+            <div class="points">172</div>
+          </div>
+
+          <div class="standing-row">
+            <div class="position">03</div>
+            <div class="driver-info">
+              <strong>Lando Norris</strong>
+              <span>McLaren</span>
+            </div>
+            <div class="points">164</div>
+          </div>
         </div>
 
-        <div class="news-grid">
-          <article class="news-card">
-            <span>Breaking</span>
-            <h3>Qualifying-Drama bis zur letzten Runde</h3>
-            <p>
-              Spannung pur im Zeittraining: Die Abstände zwischen den
-              Top-Fahrern werden immer kleiner.
-            </p>
-            <a href="#">Weiterlesen</a>
-          </article>
+        <div class="standings-card">
+          <div class="standings-title">
+            <h3>Top Teams</h3>
+            <span>Constructors</span>
+          </div>
 
-          <article class="news-card">
-            <span>Teams</span>
-            <h3>Neue Upgrades könnten alles verändern</h3>
-            <p>
-              Mehr Performance, bessere Aerodynamik und ein engeres Feld – das
-              nächste Rennen wird entscheidend.
-            </p>
-            <a href="#">Weiterlesen</a>
-          </article>
+          <div class="standing-row">
+            <div class="position">01</div>
+            <div class="driver-info">
+              <strong>Red Bull Racing</strong>
+              <span>Championship push</span>
+            </div>
+            <div class="points">310</div>
+          </div>
 
-          <article class="news-card">
-            <span>Fahrer</span>
-            <h3>Junge Talente setzen die Spitze unter Druck</h3>
-            <p>
-              Die neue Generation fährt aggressiv, präzise und selbstbewusst –
-              und will ganz nach vorne.
-            </p>
-            <a href="#">Weiterlesen</a>
-          </article>
+          <div class="standing-row">
+            <div class="position">02</div>
+            <div class="driver-info">
+              <strong>Ferrari</strong>
+              <span>Strong qualifying pace</span>
+            </div>
+            <div class="points">287</div>
+          </div>
+
+          <div class="standing-row">
+            <div class="position">03</div>
+            <div class="driver-info">
+              <strong>McLaren</strong>
+              <span>Consistent race form</span>
+            </div>
+            <div class="points">254</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <div class="cta-card">
+          <p class="cta-top">ENTER THE PADDOCK</p>
+          <h2>Alle wichtigen F1-Momente an einem Ort</h2>
+          <p>
+            Von Breaking News bis Standings und Rennkalender: eine Startseite,
+            die sich direkt wie Motorsport anfühlt.
+          </p>
+          <a href="#" class="btn btn-primary">Zur Plattform</a>
         </div>
       </section>
     </main>
