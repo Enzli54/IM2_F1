@@ -1,0 +1,87 @@
+/* ── Keyframes ──────────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%       { transform: rotate(45deg) translateY(6px); }
+}
+
+@keyframes drawLine {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+
+@keyframes tickerCount {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Section Reveal ─────────────────────────────────────────────── */
+.reveal-section {
+  opacity: 1;
+  transform: none;
+  transition: opacity 550ms cubic-bezier(.16,1,.3,1),
+              transform 550ms cubic-bezier(.16,1,.3,1);
+}
+
+.reveal-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sections triggered by scroll (IntersectionObserver) */
+.reveal-section.reveal-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Card hover lift ────────────────────────────────────────────── */
+.race-card,
+.driver-card {
+  will-change: transform;
+}
+
+/* ── Podium stagger ─────────────────────────────────────────────── */
+.podium-step { will-change: opacity, transform; }
+
+/* ── Number ticker ──────────────────────────────────────────────── */
+.ticker-el {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Telemetry chart line draw ──────────────────────────────────── */
+/* Chart.js handles its own canvas animation, but we add a fade-in  */
+#telemetry-chart {
+  animation: fadeUp 500ms ease both;
+}
+
+/* ── Tab switch ─────────────────────────────────────────────────── */
+.tab-pane {
+  animation: fadeUp 280ms ease both;
+}
+
+/* ── Accessibility: reduce motion ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scroll-arrow { animation: none; }
+}

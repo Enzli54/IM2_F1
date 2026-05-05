@@ -1,0 +1,148 @@
+/* ── CSS Custom Properties ─────────────────────────────────────── */
+:root {
+  /* Palette */
+  --ink:    #111111;
+  --paper:  #FAFAFA;
+  --muted:  #666666;
+  --line:   #E5E5E5;
+  --accent: #E10600; /* default F1 red, overridden dynamically per team */
+
+  /* Sector colours */
+  --sector-purple: #9D3EFF;
+  --sector-green:  #2ECC71;
+  --sector-yellow: #F1C40F;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  2rem;
+  --space-xl:  3rem;
+  --space-2xl: 5rem;
+
+  /* Misc */
+  --radius:    4px;
+  --radius-md: 8px;
+  --trans:     220ms ease;
+  --shadow:    0 2px 12px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.10);
+
+  /* Layout */
+  --container: 1440px;
+  --gutter:    clamp(1.25rem, 4vw, 3rem);
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; }
+
+button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+
+a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Typography ─────────────────────────────────────────────────── */
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.section-tag {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.sub-heading {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--line);
+}
+
+.mono { font-family: var(--font-mono); }
+
+/* ── Container ──────────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Utility ────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Loading / States ───────────────────────────────────────────── */
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--line);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+  margin: 0 auto var(--space-sm);
+}
+
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--muted);
+  font-size: 0.85rem;
+  gap: var(--space-sm);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--muted);
+  font-size: 0.9rem;
+  gap: var(--space-sm);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  opacity: 0.25;
+  line-height: 1;
+}
+
+.error-banner {
+  background: #fff2f2;
+  border: 1px solid #ffc5c5;
+  border-left: 3px solid #e74c3c;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin-top: var(--space-md);
+}
