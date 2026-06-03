@@ -17,7 +17,6 @@
   </head>
 
   <body>
-
     <!-- ── HEADER ──────────────────────────────────────────── -->
     <header class="app-header">
       <h1 class="app-title">F1 Race Recap</h1>
@@ -68,7 +67,6 @@
 
     <!-- ── MAIN CONTENT ─────────────────────────────────────── -->
     <main class="main-content">
-
       <!-- Loading state -->
       <div class="main-loading hidden" id="main-loading">
         <div class="spinner"></div>
@@ -82,7 +80,6 @@
 
       <!-- Podium + Side Panel -->
       <div class="content-row hidden" id="content-row">
-
         <!-- Podium ─────────────────────── -->
         <section class="podium-section">
           <div class="podium-stage" id="podium-stage">
@@ -95,7 +92,9 @@
           <div class="weather-card">
             <div class="weather-card-header">
               <p class="weather-card-title">Weather condition:</p>
-              <div class="weather-sun" id="weather-icon" aria-hidden="true">☀</div>
+              <div class="weather-sun" id="weather-icon" aria-hidden="true">
+                ☀
+              </div>
             </div>
             <div class="wrow">
               <span class="wkey">air temperature:</span>
@@ -116,12 +115,26 @@
           </div>
 
           <div class="circuit-card">
-            <button class="circuit-expand" id="circuit-expand" title="Strecke vergrössern">&#10132;</button>
-            <div class="circuit-mini-placeholder" id="circuit-mini-placeholder">Strecke lädt…</div>
-            <svg class="circuit-mini-svg hidden" viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-label="Streckenkarte" id="circuit-mini-svg">
-              <path class="cmini-path" d="M0,0Z"/>
-              <line class="cmini-sf" x1="138" y1="6" x2="142" y2="18"/>
-              <circle class="cmini-dot" cx="236" cy="88" r="4"/>
+            <button
+              class="circuit-expand"
+              id="circuit-expand"
+              title="Strecke vergrössern"
+            >
+              &#10132;
+            </button>
+            <div class="circuit-mini-placeholder" id="circuit-mini-placeholder">
+              Strecke lädt…
+            </div>
+            <svg
+              class="circuit-mini-svg hidden"
+              viewBox="0 0 280 200"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-label="Streckenkarte"
+              id="circuit-mini-svg"
+            >
+              <path class="cmini-path" d="M0,0Z" />
+              <line class="cmini-sf" x1="138" y1="6" x2="142" y2="18" />
+              <circle class="cmini-dot" cx="236" cy="88" r="4" />
             </svg>
           </div>
         </aside>
@@ -132,7 +145,13 @@
         <div class="summary-card">
           <div class="summary-header">
             <span class="summary-label">Race Summary</span>
-            <a class="summary-wiki-link hidden" id="summary-wiki-link" target="_blank" rel="noopener noreferrer">Wikipedia ↗</a>
+            <a
+              class="summary-wiki-link hidden"
+              id="summary-wiki-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Wikipedia ↗</a
+            >
           </div>
           <p class="summary-text" id="summary-text"></p>
         </div>
@@ -144,20 +163,30 @@
           <!-- rendered by JS -->
         </div>
       </section>
-
     </main>
 
     <!-- ─────────────────────────────────────────────────────── -->
     <!-- DRIVER DETAIL POPUP                                     -->
     <!-- ─────────────────────────────────────────────────────── -->
-    <div class="overlay hidden" id="driver-popup" role="dialog" aria-modal="true" aria-label="Fahrerdetails">
+    <div
+      class="overlay hidden"
+      id="driver-popup"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Fahrerdetails"
+    >
       <div class="overlay-backdrop" onclick="closeDriverPopup()"></div>
       <div class="popup-win">
-
         <div class="popup-titlebar">
           <span class="popup-titlebar-text">F1 Race Recap</span>
           <div class="popup-titlebar-dots" id="popup-dots"></div>
-          <button class="popup-close" onclick="closeDriverPopup()" aria-label="Schliessen">&#x2715;</button>
+          <button
+            class="popup-close"
+            onclick="closeDriverPopup()"
+            aria-label="Schliessen"
+          >
+            &#x2715;
+          </button>
         </div>
 
         <div class="popup-body" id="driver-popup-body">
@@ -165,25 +194,34 @@
             <div class="spinner dark"></div>
           </div>
         </div>
-
       </div>
     </div>
 
     <!-- ─────────────────────────────────────────────────────── -->
     <!-- TRACK MAP POPUP                                         -->
     <!-- ─────────────────────────────────────────────────────── -->
-    <div class="overlay hidden" id="track-popup" role="dialog" aria-modal="true" aria-label="Streckenansicht">
+    <div
+      class="overlay hidden"
+      id="track-popup"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Streckenansicht"
+    >
       <div class="overlay-backdrop" onclick="closeTrackPopup()"></div>
       <div class="popup-win popup-win-track">
-
         <div class="popup-titlebar">
           <span class="popup-titlebar-text">F1 Race Recap</span>
           <span class="track-lap-display" id="track-lap-display">–</span>
-          <button class="popup-close" onclick="closeTrackPopup()" aria-label="Schliessen">&#x2715;</button>
+          <button
+            class="popup-close"
+            onclick="closeTrackPopup()"
+            aria-label="Schliessen"
+          >
+            &#x2715;
+          </button>
         </div>
 
         <div class="track-body">
-
           <div class="track-main-area">
             <div class="track-map-area">
               <div class="track-loading-overlay" id="track-loading-overlay">
@@ -193,27 +231,45 @@
             </div>
 
             <div class="track-controls">
-              <button class="tc-btn" onclick="trackCtrl('start')" title="Anfang">&#9646;&#9664;</button>
-              <button class="tc-btn" onclick="trackCtrl('back')" title="Zurück">&#9664;</button>
-              <button class="tc-btn tc-play" id="tc-play" onclick="trackCtrl('play')" title="Play">&#9654;</button>
-              <button class="tc-btn" onclick="trackCtrl('fwd')" title="Vor">&#9654;&#9654;</button>
-              <div class="tc-scrubber" id="tc-scrubber" onclick="scrubberClick(event)">
+              <button
+                class="tc-btn"
+                onclick="trackCtrl('start')"
+                title="Anfang"
+              >
+                &#9646;&#9664;
+              </button>
+              <button class="tc-btn" onclick="trackCtrl('back')" title="Zurück">
+                &#9664;
+              </button>
+              <button
+                class="tc-btn tc-play"
+                id="tc-play"
+                onclick="trackCtrl('play')"
+                title="Play"
+              >
+                &#9654;
+              </button>
+              <button class="tc-btn" onclick="trackCtrl('fwd')" title="Vor">
+                &#9654;&#9654;
+              </button>
+              <div
+                class="tc-scrubber"
+                id="tc-scrubber"
+                onclick="scrubberClick(event)"
+              >
                 <div class="tc-track">
-                  <div class="tc-fill" id="tc-fill" style="width:0%"></div>
-                  <div class="tc-thumb" id="tc-thumb" style="left:0%"></div>
+                  <div class="tc-fill" id="tc-fill" style="width: 0%"></div>
+                  <div class="tc-thumb" id="tc-thumb" style="left: 0%"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="track-standings-panel" id="track-standings-panel"></div>
-
         </div>
-
       </div>
     </div>
 
     <script src="scripts/design.js"></script>
-
   </body>
 </html>
