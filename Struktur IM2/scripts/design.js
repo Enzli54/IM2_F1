@@ -150,7 +150,7 @@ function populateRaceSelect() {
     .forEach(m => {
       const opt       = document.createElement('option');
       opt.value       = m.meeting_key;
-      opt.textContent = m.meeting_official_name;
+      opt.textContent = m.meeting_name;
       sel.appendChild(opt);
     });
 }
@@ -185,7 +185,9 @@ async function loadRaceData() {
     ]);
 
     document.getElementById('content-row').classList.remove('hidden');
+    document.getElementById('summary-section').classList.remove('hidden');
     document.getElementById('driver-grid-section').classList.remove('hidden');
+    fetchWikiSummary();
   } catch (e) {
     showEmptyHint('Fehler: ' + e.message);
     console.error(e);
@@ -922,6 +924,64 @@ function scrubberClick(e) {
   setTrackProgress(trackPct);
 }
 
+// ── Wikipedia Race Summary ───────────────────────────────
+async function fetchWikiSummary() {
+  const textEl = document.getElementById('summary-text');
+  const linkEl = document.getElementById('summary-wiki-link');
+
+  textEl.textContent = 'Summary wird geladen…';
+  textEl.className   = 'summary-text loading';
+  linkEl.classList.add('hidden');
+
+  try {
+    const meeting = state.meetings.find(m => m.meeting_key == state.currentMeeting);
+    if (!meeting) return;
+
+    // Search Wikipedia for the race article
+    const query     = `${state.year} ${meeting.meeting_name} Formula One`;
+    const searchRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=1`
+    );
+    const searchData  = await searchRes.json();
+    const firstResult = searchData.query?.search?.[0];
+
+    if (!firstResult) {
+      textEl.textContent = 'Kein Wikipedia-Artikel für dieses Rennen gefunden.';
+      textEl.className   = 'summary-text';
+      return;
+    }
+
+    // Fetch the full intro section as plain text (skips boilerplate first paragraph)
+    const wikiRes  = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(firstResult.title)}&prop=extracts&exintro=true&explaintext=true&format=json&origin=*`
+    );
+    const wikiData = await wikiRes.json();
+    const page     = Object.values(wikiData.query?.pages || {})[0];
+    const extract  = page?.extract;
+
+    if (!extract) {
+      textEl.textContent = 'Kein Inhalt verfügbar.';
+      textEl.className   = 'summary-text';
+      return;
+    }
+
+    // Skip the boilerplate first paragraph ("The 20XX X Grand Prix was held on…")
+    const paragraphs = extract.split('\n').filter(p => p.trim().length > 50);
+    const body       = paragraphs.slice(1, 4).join('\n\n').trim();
+    const display    = body || paragraphs[0] || extract;
+
+    textEl.textContent = display.length > 900 ? display.slice(0, 900) + '…' : display;
+    textEl.className   = 'summary-text';
+
+    linkEl.href = `https://en.wikipedia.org/wiki/${encodeURIComponent(firstResult.title)}`;
+    linkEl.classList.remove('hidden');
+
+  } catch (_) {
+    textEl.textContent = 'Wikipedia-Zusammenfassung nicht verfügbar.';
+    textEl.className   = 'summary-text';
+  }
+}
+
 // ── UI Helpers ───────────────────────────────────────────
 function setMainLoading(on) {
   document.getElementById('main-loading').classList.toggle('hidden', !on);
@@ -930,6 +990,7 @@ function setMainLoading(on) {
 
 function hideAll() {
   document.getElementById('content-row').classList.add('hidden');
+  document.getElementById('summary-section').classList.add('hidden');
   document.getElementById('driver-grid-section').classList.add('hidden');
   document.getElementById('empty-hint').classList.add('hidden');
 }
