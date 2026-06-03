@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Recap — F1 Telemetrie-Explorer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/animations.css" />
+  </head>
+  <body>
+    <!-- ── 01 HERO ──────────────────────────────────────────────────── -->
+    <section id="hero" class="s-hero">
+      <div class="hero-inner container">
+        <h1 class="hero-title">RACE<br />RECAP</h1>
+        <p class="hero-sub">
+          Ein interaktiver Telemetrie-Explorer<br />für vergangene F1-Sessions.
+        </p>
+
+        <a class="scroll-cue" href="#race-picker">
+          <span class="scroll-label">Saison wählen</span>
+          <span class="scroll-arrow"></span>
+        </a>
+      </div>
+      <div class="hero-rule"></div>
+    </section>
+
+    <!-- ── 02 RACE PICKER ──────────────────────────────────────────── -->
+    <section id="race-picker" class="s-picker reveal-section">
+      <div class="container">
+        <header class="section-head">
+          <span class="section-tag">01 — Saison</span>
+          <h2 class="section-title">Wähle eine Saison</h2>
+        </header>
+
+        <div class="control-row">
+          <div
+            class="season-switcher"
+            id="season-switcher"
+            role="group"
+            aria-label="Saison auswählen"
+          >
+            <button class="btn-season" data-year="2023">2023</button>
+            <button class="btn-season" data-year="2024">2024</button>
+            <button class="btn-season" data-year="2025">2025</button>
+          </div>
+
+          <div class="picker-controls load-target">
+            <div class="picker-stage hidden" id="picker-stage-session">
+              <div class="picker-step-label">Schritt 1: Session wählen</div>
+              <div class="session-select-wrap">
+                <span class="field-label">Session</span>
+                <div
+                  class="session-select-row"
+                  role="group"
+                  aria-label="Session auswählen"
+                >
+                  <button
+                    class="session-btn active"
+                    data-session="Race"
+                    type="button"
+                  >
+                    Race
+                  </button>
+                  <button
+                    class="session-btn"
+                    data-session="Qualifying"
+                    type="button"
+                  >
+                    Qualifying
+                  </button>
+                  <button
+                    class="session-btn"
+                    data-session="Practice"
+                    type="button"
+                  >
+                    Practice
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="picker-stage hidden" id="picker-stage-race">
+              <div class="picker-step-label">Schritt 2: Rennen wählen</div>
+              <div class="race-select-wrap">
+                <label class="field-label" for="race-select"
+                  >Rennen wählen</label
+                >
+                <select id="race-select" class="form-select" disabled>
+                  <option>Wähle zuerst eine Saison</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loading-wrap hidden" id="picker-loading">
+          <div class="spinner"></div>
+          <span>Rennen werden geladen…</span>
+        </div>
+        <div class="empty-state load-target hidden" id="picker-empty">
+          <div class="empty-icon">◯</div>
+          <p>Wähle eine Saison um alle Rennen zu sehen.</p>
+        </div>
+        <div class="error-banner hidden" id="picker-error"></div>
+      </div>
+    </section>
+
+    <!-- ── 03 RACE OVERVIEW ────────────────────────────────────────── -->
+    <section id="race-overview" class="s-overview reveal-section hidden">
+      <div class="container">
+        <button class="btn-back" id="back-to-picker">← Alle Rennen</button>
+
+        <div id="overview-header" class="overview-header"></div>
+
+        <div id="session-summary" class="session-summary load-target hidden">
+          <div class="session-line">
+            <span class="session-label">Session</span>
+            <span class="session-value" id="summary-session-type">Race</span>
+          </div>
+          <div class="session-line">
+            <span class="session-label">Datum</span>
+            <span class="session-value" id="summary-date">–</span>
+          </div>
+          <div class="session-line">
+            <span class="session-label">Ort</span>
+            <span class="session-value" id="summary-location">–</span>
+          </div>
+        </div>
+
+        <div class="loading-wrap hidden" id="overview-loading">
+          <div class="spinner"></div>
+          <span>Daten werden geladen…</span>
+        </div>
+
+        <div id="overview-body" class="overview-body load-target hidden">
+          <div class="overview-top">
+            <div class="podium-wrap">
+              <h3 class="sub-heading">Podium</h3>
+              <div class="podium" id="podium"></div>
+            </div>
+            <div class="weather-wrap" id="weather-wrap"></div>
+          </div>
+          <div class="drivers-wrap">
+            <h3 class="sub-heading">Fahrer — klicke für Details</h3>
+            <div class="driver-grid" id="driver-grid"></div>
+          </div>
+        </div>
+
+        <div class="error-banner hidden" id="overview-error"></div>
+      </div>
+    </section>
+
+    <!-- ── 04 DRIVER DETAIL ───────────────────────────────────────── -->
+    <section id="driver-detail" class="s-driver reveal-section hidden">
+      <div class="container">
+        <button class="btn-back" id="back-to-overview">
+          ← Zurück zur Übersicht
+        </button>
+
+        <div id="driver-header" class="driver-header"></div>
+
+        <div class="loading-wrap hidden" id="driver-loading">
+          <div class="spinner"></div>
+          <span>Runden werden geladen…</span>
+        </div>
+
+        <div class="driver-body load-target hidden" id="driver-body">
+          <div id="lap-info" class="lap-info"></div>
+          <div class="telemetry-panel">
+            <h3 class="sub-heading">Speed-Telemetrie — Schnellste Runde</h3>
+            <div class="loading-wrap hidden" id="telemetry-loading">
+              <div class="spinner"></div>
+              <span>Telemetrie wird geladen…</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="telemetry-chart"></canvas>
+            </div>
+            <div class="error-banner hidden" id="telemetry-error"></div>
+          </div>
+        </div>
+
+        <div class="error-banner hidden" id="driver-error"></div>
+      </div>
+    </section>
+
+    <!-- ── 06 FOOTER ──────────────────────────────────────────────── -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div>
+          <p class="footer-logo">RACE RECAP</p>
+          <p class="footer-tagline">
+            Interaktiver Telemetrie-Explorer — IM2 FS26
+          </p>
+        </div>
+        <div class="footer-links">
+          <p>
+            Daten via
+            <a
+              href="https://openf1.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              OpenF1 API
+            </a>
+          </p>
+          <p>Multimedia Production BSc — ZHAW</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script type="module" src="scripts/main.js"></script>
+  </body>
+</html>

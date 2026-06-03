@@ -37,18 +37,6 @@ img    { display: block; max-width: 100%; }
   z-index: 1;
 }
 
-.app-header-car {
-  height: 68px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-}
-
-.app-header-car canvas {
-  height: 68px;
-  width: 200px;
-  display: block;
-}
 
 .app-header-accent {
   position: absolute;
@@ -288,11 +276,23 @@ img    { display: block; max-width: 100%; }
   overflow: hidden;
 }
 
+.weather-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+
 .weather-card-title {
   font-size: 0.78rem;
   font-weight: 700;
   color: #333;
-  margin-bottom: 0.7rem;
+}
+
+.weather-sun {
+  font-size: 1.4rem;
+  line-height: 1;
+  opacity: 0.5;
 }
 
 .wrow {
@@ -315,15 +315,6 @@ img    { display: block; max-width: 100%; }
   color: #111;
 }
 
-.weather-sun {
-  position: absolute;
-  right: 0.8rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2.2rem;
-  opacity: 0.6;
-  pointer-events: none;
-}
 
 /* Circuit Card */
 .circuit-card {
@@ -332,6 +323,17 @@ img    { display: block; max-width: 100%; }
   border-radius: 10px;
   padding: 0.75rem;
   position: relative;
+}
+
+.circuit-mini-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  font-size: 0.65rem;
+  color: #aaa;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
 }
 
 .circuit-expand {
@@ -417,6 +419,11 @@ img    { display: block; max-width: 100%; }
   color: #666;
   min-width: 22px;
   flex-shrink: 0;
+}
+
+.dc-pos-dnf {
+  font-size: 0.62rem;
+  color: #E10600;
 }
 
 .dc-avatar {
@@ -542,6 +549,10 @@ img    { display: block; max-width: 100%; }
   font-size: 0.82rem;
   color: #c0392b;
   padding: 1rem;
+}
+
+.dpu-radio-error {
+  color: #c0392b;
 }
 
 /* ── Driver Popup Contents ───────────────────────────────────── */
@@ -752,6 +763,24 @@ img    { display: block; max-width: 100%; }
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd transparent;
+}
+
+.dpu-radio-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dpu-radio-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dpu-radio-list::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
 }
 
 .dpu-radio-item {
@@ -794,6 +823,14 @@ img    { display: block; max-width: 100%; }
   transition: width 80ms linear;
 }
 
+.dpu-radio-notice {
+  font-size: 0.55rem;
+  color: #aaa;
+  line-height: 1.4;
+  margin-top: 8px;
+  font-style: italic;
+}
+
 .dpu-radio-time {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.55rem;
@@ -829,25 +866,106 @@ img    { display: block; max-width: 100%; }
    TRACK POPUP
    ════════════════════════════════════════════════════════════════ */
 .popup-win-track {
-  width: 520px;
-  max-width: 96vw;
+  width: min(960px, 96vw);
+  max-height: min(700px, 94vh);
+}
+
+.track-lap-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #E10600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .track-body {
   flex: 1;
   background: #2a2a2a;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-height: 360px;
+}
+
+.track-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .track-map-area {
   flex: 1;
   display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 12px;
+  position: relative;
+  min-height: 0;
+}
+
+/* Standings panel */
+.track-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  position: relative;
+  background: #2a2a2a;
+  z-index: 5;
+}
+
+.track-loading-overlay.hidden {
+  display: none;
+}
+
+.track-loading-overlay span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #666;
+  letter-spacing: 0.08em;
+}
+
+.track-standings-panel {
+  width: 120px;
+  flex-shrink: 0;
+  background: #1e1e1e;
+  border-left: 1px solid #333;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #444 transparent;
+}
+
+.ts-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.ts-pos {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #888;
+  min-width: 14px;
+  text-align: right;
+}
+
+.ts-icon {
+  width: 36px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ts-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: #ccc;
+  letter-spacing: 0.05em;
 }
 
 .track-sf-blocks {
@@ -868,8 +986,14 @@ img    { display: block; max-width: 100%; }
 
 .track-full-svg {
   width: 100%;
-  max-width: 420px;
-  height: auto;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.track-full-canvas {
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
@@ -887,10 +1011,8 @@ img    { display: block; max-width: 100%; }
   stroke-linecap: square;
 }
 
-.track-driver-dot {
-  fill: #E10600;
-  filter: drop-shadow(0 0 5px #E10600);
-  transition: cx 60ms linear, cy 60ms linear;
+.track-car-icon {
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.7));
 }
 
 /* Playback Controls */
