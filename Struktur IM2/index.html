@@ -81,11 +81,11 @@
       <!-- Podium + Side Panel -->
       <div class="content-row hidden" id="content-row">
         <!-- Podium ─────────────────────── -->
-        <section class="podium-section">
+        <div class="podium-section">
           <div class="podium-stage" id="podium-stage">
             <!-- rendered by JS -->
           </div>
-        </section>
+        </div>
 
         <!-- Weather + Circuit ────────── -->
         <aside class="side-panel">
@@ -141,28 +141,29 @@
       </div>
 
       <!-- Race Summary (Wikipedia) -->
-      <section class="summary-section hidden" id="summary-section">
+      <div class="summary-section hidden" id="summary-section">
         <div class="summary-card">
           <div class="summary-header">
             <span class="summary-label">Race Summary</span>
             <a
               class="summary-wiki-link hidden"
               id="summary-wiki-link"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
-              >Wikipedia ↗</a
+              >Wikipedia ↗</
             >
           </div>
           <p class="summary-text" id="summary-text"></p>
         </div>
-      </section>
+      </div>
 
       <!-- Driver Grid (positions 4–21) -->
-      <section class="driver-grid-section hidden" id="driver-grid-section">
+      <div class="driver-grid-section hidden" id="driver-grid-section">
         <div class="driver-grid" id="driver-grid">
           <!-- rendered by JS -->
         </div>
-      </section>
+      </div>
     </main>
 
     <!-- ─────────────────────────────────────────────────────── -->
