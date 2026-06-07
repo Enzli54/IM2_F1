@@ -35,7 +35,7 @@ Dabei sind wir auf folgende Hürden gestossen und haben sie gelöst:
 - **Herausforderung Real-Time-Daten vs. Performance:** Ursprünglich wollten wir jede Millisekunde der Telemetriedaten live streamen. Das führte im Browser jedoch schnell zu Performance-Problemen und langen Ladezeiten.
   - _Die Lösung:_ Wir haben uns auf ein smartes Caching und eine aggregierte Wiedergabe konzentriert. So bleibt die App schnell, liefert aber trotzdem alle spannenden Rennmomente.
 - **Zu viele Ideen:** Von 3D-Ansichten bis hin zu KI-Kommentaren stand alles auf dem Wunschzettel. Uns wurde klar: Lieber weniger Features, die dafür aber reibungslos und fehlerfrei laufen. Das Ergebnis ist dieses voll funktionsfähige, runde Dashboard.
-- **Auto Live Tracking:** Das Tracken von den Autos auf der jeweiligen Rennstrecke ist immer noch fehlerhaft. Hier haben wir es nicht geaschaft das die Strecke immer richtig angezeit wird.
+- **Auto Live Tracking:** Das Tracken von den Autos auf der jeweiligen Rennstrecke ist immer noch fehlerhaft. Hier haben wir es nicht geschaft das die Strecke immer richtig angezeit wird.
   - _Die Lösung:_ Würden wir mit der Webseite tatsächlich live gehen, würden wir dieses Feature etnweder entfernen oder ein anderes einbauen.
 
 ## Projektstruktur
