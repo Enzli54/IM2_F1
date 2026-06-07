@@ -13,7 +13,7 @@ Eine moderne, semantische Webanwendung zur Visualisierung und Nachbereitung von 
 - **Wetter-Live-Daten:** Kompakte Übersicht der Luft- und Streckentemperatur, Luftfeuchtigkeit und Regenwahrscheinlichkeit für die gewählte Session.
 - **Canvas-Rennsimulation:** Eine interaktive Streckenansicht im Grossformat. Über Medien-Controls (Play, Pause, Vorlauf, Rücklauf) und einen interaktiven Zeit-Scrubber kann der Rennverlauf visuell nachvollzogen werden.
 - **Echtzeit-Standings:** Ein dynamisches Klassement-Panel direkt neben der Streckenanimation, das sich synchron zur Rennsimulation aktualisiert.
-- **Fahrer-Details:** Detail-Popups (Modals) mit tiefergehenden Statistiken und Informationen zu den einzelnen Fahrern.
+- **Fahrer-Details:** Detail-Popups mit tiefergehenden Statistiken und Informationen zu den einzelnen Fahrern.
 - **Wikipedia-Anbindung:** Direkte Verlinkung zur offiziellen Wikipedia-Rennzusammenfassung für geschichtlichen Kontext.
 
 ## Vorgehensweise & Entwicklungsprozess
