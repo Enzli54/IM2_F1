@@ -1,12 +1,12 @@
 'use strict';
 
-// Reset dropdowns on every page load (browser may persist values across reloads)
+// Reset dropdowns on every page load
 document.getElementById('year-select').value       = '';
 document.getElementById('race-select').value       = '';
 document.getElementById('session-select').innerHTML = '<option value="">Session wählen</option>';
 document.getElementById('session-select').disabled  = true;
 
-// ── API ──────────────────────────────────────────────────
+// ── API ─────
 const API_BASE = 'https://api.openf1.org/v1';
 const apiCache = new Map();
 
@@ -32,7 +32,7 @@ async function apiFetch(endpoint, params = {}) {
   return data;
 }
 
-// ── State ────────────────────────────────────────────────
+// ── State ───
 let state = {
   year: null,
   meetings: [],
@@ -41,7 +41,7 @@ let state = {
   currentMeeting: null,
 };
 
-// ── Helpers ──────────────────────────────────────────────
+// ── Helpers ───
 function formatLapTime(s) {
   if (!s || s <= 0) return '–';
   const m   = Math.floor(s / 60);
@@ -71,7 +71,7 @@ function tireClass(compound) {
   return `tire-${c}`;
 }
 
-// ── Year / Race / Session selects ────────────────────────
+// ── Year / Race / Session selects ───
 document.getElementById('year-select').addEventListener('change', async function () {
   const year = this.value;
   if (!year) return;
@@ -155,9 +155,8 @@ function populateRaceSelect() {
     });
 }
 
-// ── Load Race Overview ───────────────────────────────────
+// ── Load Race Overview ─────
 async function loadRaceData() {
-  // Reset track data when switching sessions
   trackNormalized = [];
   trackDrivers    = [];
   trackLaps       = [];
@@ -196,7 +195,7 @@ async function loadRaceData() {
   }
 }
 
-// ── Podium ───────────────────────────────────────────────
+// ── Podium ────
 async function loadPodium(sessionKey) {
   const [results, drivers] = await Promise.all([
     apiFetch('/session_result', { session_key: sessionKey }),
@@ -208,7 +207,6 @@ async function loadPodium(sessionKey) {
     .filter(r => r.position >= 1 && r.position <= 3)
     .sort((a, b) => a.position - b.position);
 
-  // Podium display order: P3 | P1 | P2
   const order = [
     top3.find(r => r.position === 3),
     top3.find(r => r.position === 1),
@@ -242,7 +240,7 @@ async function loadPodium(sessionKey) {
   });
 }
 
-// ── Weather ──────────────────────────────────────────────
+// ── Weather ────
 async function loadWeather(sessionKey) {
   const data = await apiFetch('/weather', { session_key: sessionKey });
   if (!data.length) return;
@@ -256,7 +254,7 @@ async function loadWeather(sessionKey) {
   if (sunEl) sunEl.textContent = hadRain ? '🌧' : '☀';
 }
 
-// ── Driver Grid ──────────────────────────────────────────
+// ── Driver Grid ──
 async function loadDriverGrid(sessionKey) {
   const [results, drivers] = await Promise.all([
     apiFetch('/session_result', { session_key: sessionKey }),
@@ -296,7 +294,7 @@ async function loadDriverGrid(sessionKey) {
   });
 }
 
-// ── Driver Popup ─────────────────────────────────────────
+// ── Driver Popup ─────────
 async function openDriverPopup(driverNumber, driverHint) {
   const popup = document.getElementById('driver-popup');
   const body  = document.getElementById('driver-popup-body');
@@ -448,7 +446,7 @@ function closeDriverPopup() {
   stopAllAudio();
 }
 
-// ── Audio ────────────────────────────────────────────────
+// ── Audio ──────────
 let currentAudio = null;
 let currentAudioBtn = null;
 let audioSimInterval = null;
@@ -468,7 +466,6 @@ function playRadio(btn) {
   btn.innerHTML = '&#9646;&#9646;';
   currentAudioBtn = btn;
 
-  // No crossOrigin attribute — media elements don't require CORS for playback
   currentAudio = new Audio(url);
 
   currentAudio.addEventListener('timeupdate', () => {
@@ -508,7 +505,7 @@ function stopAllAudio() {
   currentAudioBtn = null;
 }
 
-// ── Track Popup ──────────────────────────────────────────
+// ── Track Popup ─────────
 let trackNormalized = [];
 let trackDrivers    = [];
 let trackLaps       = [];   // P1's laps for the lap counter
@@ -573,14 +570,13 @@ async function ensureTrackData() {
     const p1 = results.find(r => r.position === 1);
     if (!p1) return;
 
-    // Load P1's laps for the lap counter
+  
     trackLaps = (await apiFetch('/laps', {
       session_key:   state.currentSession,
       driver_number: p1.driver_number,
     })).filter(l => l.lap_number > 0 && l.date_start)
        .sort((a, b) => a.lap_number - b.lap_number);
 
-    // Fetch FULL race location data for a driver (adaptive sampling → ~600 pts)
     const fetchAllLoc = async (driverNum) => {
       const url = `${API_BASE}/location?session_key=${state.currentSession}&driver_number=${driverNum}`;
       try {
@@ -593,7 +589,6 @@ async function ensureTrackData() {
       } catch { return []; }
     };
 
-    // Batch-fetch all drivers (4 at a time)
     const allDriverData = [];
     for (let i = 0; i < results.length; i += 4) {
       const batch = results.slice(i, i + 4);
@@ -606,7 +601,6 @@ async function ensureTrackData() {
       if (i + 4 < results.length) await new Promise(r => setTimeout(r, 300));
     }
 
-    // Global coordinate + time bounds
     const allX = allDriverData.flatMap(d => d.locs.map(l => l.x)).filter(v => v != null);
     const allY = allDriverData.flatMap(d => d.locs.map(l => l.y)).filter(v => v != null);
     const allT = allDriverData.flatMap(d => d.locs.map(l => new Date(l.date).getTime())).filter(Boolean);
@@ -616,7 +610,7 @@ async function ensureTrackData() {
       minX: Math.min(...allX), maxX: Math.max(...allX),
       minY: Math.min(...allY), maxY: Math.max(...allY),
     };
-    // Start from Lap 1, not formation lap
+
     const lap1 = trackLaps.find(l => l.lap_number === 1);
     trackTimeMin = lap1
       ? new Date(lap1.date_start).getTime()
@@ -625,7 +619,6 @@ async function ensureTrackData() {
 
     const norm = (locs, w, h, pad) => normalizeLocations(locs, w, h, pad, bounds);
 
-    // Track path: fetch ONE clean lap (fastest lap of P1, high resolution)
     const validLaps = trackLaps.filter(l => l.lap_duration > 0 && l.lap_number > 1);
     const refLap = validLaps.length
       ? validLaps.reduce((b, l) => l.lap_duration < b.lap_duration ? l : b)
@@ -638,7 +631,7 @@ async function ensureTrackData() {
       try {
         const pathRes = await fetch(pathUrl);
         if (pathRes.ok) pathLocs = await pathRes.json();
-      } catch { /* use empty, fallback below */ }
+      } catch {  }
     }
 
     // Fallback: use P1's sampled race data if single-lap fetch failed
@@ -799,7 +792,6 @@ function renderTrackFrame() {
 
   if (!trackPathPoints.length) return;
 
-  // Map 400×300 normalised space → canvas CSS pixels (uniform scale, centred)
   const NW = 400, NH = 300;
   const scale = Math.min(W / NW, H / NH);
   const ox    = (W - NW * scale) / 2;

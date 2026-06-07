@@ -5,7 +5,7 @@
   --paper:  #FAFAFA;
   --muted:  #666666;
   --line:   #E5E5E5;
-  --accent: #E10600; /* default F1 red, overridden dynamically per team */
+  --accent: #E10600;
 
   /* Sector colours */
   --sector-purple: #9D3EFF;
@@ -98,7 +98,7 @@ a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 /* ── Utility ────────────────────────────────────────────────────── */
 .hidden { display: none !important; }
 
-/* ── Loading / States ───────────────────────────────────────────── */
+/* ── Loading  ───────────────────────────────────────────── */
 .spinner {
   width: 28px;
   height: 28px;
